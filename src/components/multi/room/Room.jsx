@@ -4,34 +4,51 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FirebaseContext } from "../../../helpers/FirebaseContext";
 
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import { initializeApp } from "firebase/app";
+import FirebaseConfig from "../../../helpers/config/FirebaseConfig";
+
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  updateDoc,
+  getDoc,
+  deleteDoc,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
+// Initialize Firebase
+const app = initializeApp(FirebaseConfig);
+const db = getFirestore(app);
+
 const Room = ({ navigation, route }) => {
-  const { zoom } = route.params;
-  // console.log("room: ", zoom);
+  const { zoomId } = route.params;
+  console.log("room: ", zoomId);
 
   const Firebase = React.useContext(FirebaseContext);
-
-  // Get Room from Firebase
   const [room, setRoom] = React.useState(null);
-  React.useEffect(() => {
-    const f_room = Firebase.getGameData(zoom.id);
-    // console.log("f_room: ", f_room);
-    setRoom(f_room);
-  }, []);
 
-  // Listen for Room Changes and Update State
   React.useEffect(() => {
-    const unsubscribe = Firebase.listenToRoomChanges(zoom.id, (room) => {
-      setRoom(room);
+    // Get Room from Firebase on mount and set to state
+
+    // This also updates the state when the room changes
+    const docRef = doc(db, "rooms", zoomId);
+    const unsubscribe = onSnapshot(docRef, (doc) => {
+      setRoom(doc.data());
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
   }, []);
-
-  // wait for room to load
 
   return (
     <View style={styles.container}>
-      {/* {room && (
+      {room && (
         <View>
           <Text style={{ color: "#fff" }}>
             Player 1: {room.players.player1.name}
@@ -40,7 +57,7 @@ const Room = ({ navigation, route }) => {
             Player 2: {room.players.player2.name}
           </Text>
         </View>
-      )} */}
+      )}
       {/* {
         // wait for room to load
         room ? (

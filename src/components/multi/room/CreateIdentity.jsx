@@ -23,11 +23,15 @@ const CreateIdentity = ({ navigation }) => {
     if (profanity.exists(name)) {
       alert("Please enter a valid name.");
     } else {
+      // Set name to User Context
+      const createdUser = {
+        name: name,
+        uid: User.uid,
+      };
+      //setUser({ ...User, name: name });
+      //console.log("User: ", User);
       // Create User
-      const user = await Firebase.signUp({
-        name,
-        // uid: Firebase.getCurrentUser().uid,
-      });
+      const user = await Firebase.signUp(createdUser);
       // Set User
       setUser(user);
       // Navigate to Home

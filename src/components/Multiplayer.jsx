@@ -12,6 +12,7 @@ import { AlertBox, fire } from "react-native-alertbox";
 // Context
 import { UserContext } from "../helpers/UserContext";
 import { FirebaseContext } from "../helpers/FirebaseContext";
+import { async } from "@firebase/util";
 
 const Multiplayer = ({ navigation }) => {
   // Context
@@ -33,24 +34,57 @@ const Multiplayer = ({ navigation }) => {
   // console.log(generateRoomID());
 
   // Join Room State
-  const [roomID, setRoomID] = React.useState("");
+  // const [roomID, setRoomID] = React.useState("");
 
   // Prompt for Joining Room
   const JoinRoom = () => {
-    if (
-      (roomID.length < 4 || roomID.length !== 4) &&
-      !Firebase.checkRoom(roomID)
-    ) {
-      alert("Please enter a valid room ID.");
-    } else {
-      // Join Room
-      Firebase.joinRoom(roomID, User);
-      // Navigate to Room
-      navigation.navigate("Room", { room: roomID });
-    }
+    fire({
+      title: "Join Room",
+      // buttons
+      actions: [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+        },
+        {
+          text: "Join",
+          onPress: async (id) => {
+            // Set Room ID
+            // setRoomID(id.id);
+            //console.log(id.id);
+            // Check if room exists
+            if (id.id !== "" || id.id !== null || id.id !== undefined) {
+              // console.log("Pre check: ", id.id);
+              // console.log("Room Exists: ", await Firebase.checkRoom(id.id));
+              if (await Firebase.checkRoom(id.id)) {
+                // console.log("Post check: ", id.id);
+                // Join Room
+                await Firebase.joinRoom(id.id, User);
+                // console.log("Post join: ", id.id);
+                // Navigate to Room
+                navigation.navigate("Room", { zoomId: id.id });
+                // console.log("Post navigate: ", id.id);
+              } else {
+                alert(`Room #${id.id} does not exist.`);
+              }
+            } else {
+              alert(`Room #${id.id} DNE.`);
+            }
+          },
+        },
+      ],
+      // fields
+      fields: [
+        {
+          name: "id",
+          placeholder: "Enter Room ID",
+          keyboardType: "default",
+        },
+      ],
+    });
   };
 
-  console.log(User);
+  // console.log(User);
 
   // Room Object
   const room = {
@@ -58,7 +92,7 @@ const Multiplayer = ({ navigation }) => {
     players: {
       player1: {
         name: User.name,
-        //  uid: User.uid,
+        uid: User.uid,
         score: 0,
       },
       player2: {
@@ -83,7 +117,7 @@ const Multiplayer = ({ navigation }) => {
     try {
       await Firebase.createRoom(room);
 
-      navigation.navigate("Room", { zoom: room });
+      navigation.navigate("Room", { zoomId: room.id });
     } catch (err) {
       console.log("Error @Multiplayer.createRoom: ", err.message);
     }
@@ -92,6 +126,7 @@ const Multiplayer = ({ navigation }) => {
   // Join Room
   return (
     <SafeAreaView style={styles.container}>
+      <AlertBox />
       <View style={{ flex: 1, padding: 20 }}>
         {/* Header */}
         <View style={{ justifyContent: "center" }}>
@@ -114,7 +149,7 @@ const Multiplayer = ({ navigation }) => {
         {/* Join Room */}
         <TouchableOpacity
           style={styles.gameTypeButton}
-          onPress={() => console.log("Join Room")}
+          onPress={() => JoinRoom()}
         >
           <Text style={styles.gameTypeButtonText}>Join Room</Text>
         </TouchableOpacity>

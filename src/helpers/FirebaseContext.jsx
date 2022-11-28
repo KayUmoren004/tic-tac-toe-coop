@@ -86,7 +86,10 @@ const Firebase = {
 
       const uid = Firebase.getCurrentUser().uid;
 
-      await setDoc(doc(db, "users", uid), user);
+      await setDoc(doc(db, "users", uid), {
+        name: user.name,
+        uid: uid,
+      });
 
       return { ...user, uid };
     } catch (err) {
@@ -111,13 +114,6 @@ const Firebase = {
   // Join Room
   joinRoom: async (roomId, user) => {
     try {
-      // await setDoc(doc(db, "rooms", room.id), room);
-
-      // // Update Room with player2
-      // await updateDoc(doc(db, "rooms", room.id), {
-      //   players: {
-      //     player1: {
-
       // Get Room
       const roomRef = await doc(db, "rooms", roomId);
       const roomSnap = await getDoc(roomRef);
@@ -131,7 +127,7 @@ const Firebase = {
             player1: room.players.player1,
             player2: {
               name: user.name,
-              // uid: user.uid,
+              uid: user.uid,
               score: 0,
             },
           },
@@ -145,11 +141,19 @@ const Firebase = {
   getGameData: async (roomId) => {
     try {
       const docRef = await doc(db, "rooms", roomId);
-      const docSnap = await getDoc(docRef);
+      // const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        return docSnap.data();
-      }
+      // if (docSnap.exists()) {
+      //   // return docSnap.data();
+      // }
+
+      const querySnapshot = await onSnapshot(docRef, (doc) => {
+        if (doc.exists()) {
+          return doc.data();
+        }
+      });
+
+      return querySnapshot;
     } catch (err) {
       console.log("Error @Firebase.getGameData: ", err.message);
     }
@@ -165,16 +169,44 @@ const Firebase = {
   // Check if Room Exists
   checkRoom: async (roomId) => {
     try {
-      const docRef = await doc(db, "rooms", roomId);
+      const docRef = doc(db, "rooms", roomId);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         return true;
+        console.log("Document data:", docSnap.data());
       } else {
         return false;
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
       }
     } catch (err) {
       console.log("Error @Firebase.checkRoom: ", err.message);
+    }
+  },
+
+  // Determine which user created the room using uid
+  determineRoomCreator: async (roomId) => {
+    try {
+      const docRef = doc(db, "rooms", roomId);
+      const docSnap = getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const room = docSnap.data();
+
+        if (room.players.player1.uid === Firebase.getCurrentUser().uid) {
+          return true;
+        } else {
+          return false;
+        }
+
+        // Set player to player 1 if room creator disconnects and joins back in
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    } catch (err) {
+      console.log("Error @Firebase.determineRoomCreator: ", err.message);
     }
   },
 };
