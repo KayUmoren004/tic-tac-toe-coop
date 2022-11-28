@@ -6,7 +6,7 @@ const UserProvider = (props) => {
   // State
   const [state, setState] = useState({
     name: "",
-    email: "",
+    // email: "",
     uid: "",
     isLoggedIn: null,
   });

@@ -9,7 +9,67 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const Multiplayer = () => {
+// Context
+import { UserContext } from "../helpers/UserContext";
+import { FirebaseContext } from "../helpers/FirebaseContext";
+
+const Multiplayer = ({ navigation }) => {
+  // Context
+  const [User] = React.useContext(UserContext);
+  const Firebase = React.useContext(FirebaseContext);
+  // Generate Random Room ID (4 numbers and 1 letter)
+  const generateRoomID = () => {
+    let roomID = "";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    for (let i = 0; i < 4; i++) {
+      roomID += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
+    }
+
+    return roomID;
+  };
+  // console.log(generateRoomID());
+
+  // Room Object
+  const room = {
+    id: generateRoomID(),
+    players: {
+      player1: {
+        name: User.name,
+        uid: User.uid,
+        score: 0,
+      },
+      player2: {
+        name: "waiting",
+        uid: "_blank",
+        score: 0,
+      },
+    },
+    currentPlayer: "player1",
+    currentCell: "_blank",
+    cellsOccupied: {},
+    isDisabled: false,
+    winner: "_blank",
+    gameID: `${generateRoomID()}-${generateRoomID()}`,
+    moves: {
+      player1Moves: {},
+      player2Moves: {},
+    },
+  };
+  // Create Room
+  const createRoom = async () => {
+    try {
+      await Firebase.createRoom(room);
+
+      navigation.navigate("Room", { room });
+    } catch (err) {
+      console.log("Error @Multiplayer.createRoom: ", err.message);
+    }
+  };
+
+  // Join Room
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1, padding: 20 }}>
@@ -20,14 +80,14 @@ const Multiplayer = () => {
         {/* Set Username */}
         <TouchableOpacity
           style={styles.gameTypeButton}
-          onPress={() => console.log("Set Username")}
+          onPress={() => navigation.navigate("Create Identity")}
         >
           <Text style={styles.gameTypeButtonText}>Set Username</Text>
         </TouchableOpacity>
         {/* Create Room */}
         <TouchableOpacity
           style={styles.gameTypeButton}
-          onPress={() => console.log("Create Room")}
+          onPress={() => createRoom()}
         >
           <Text style={styles.gameTypeButtonText}>Create Room</Text>
         </TouchableOpacity>

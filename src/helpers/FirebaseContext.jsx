@@ -116,6 +116,19 @@ const Firebase = {
       console.log("Error @Firebase.joinRoom: ", err.message);
     }
   },
+  // Get Game Data from Room
+  getGameData: async (roomId) => {
+    try {
+      const docRef = await doc(db, "rooms", roomId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        return docSnap.data();
+      }
+    } catch (err) {
+      console.log("Error @Firebase.getGameData: ", err.message);
+    }
+  },
 };
 
 const FirebaseProvider = (props) => {

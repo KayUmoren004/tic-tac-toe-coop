@@ -12,6 +12,8 @@ import {
 // Screens
 import SinglePlayer from "./SinglePlayer";
 import Multiplayer from "./Multiplayer";
+import Room from "./multi/room/Room";
+import CreateIdentity from "./multi/room/CreateIdentity";
 import Local from "./Local";
 
 const App = ({ navigation }) => {
@@ -46,7 +48,7 @@ const App = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.gameTypeButton}
-            onPress={() => navigation.navigate("Multiplayer")}
+            onPress={() => navigation.navigate("Multiplayer Stack")}
           >
             <Text style={styles.gameTypeButtonText}>Multiplayer</Text>
           </TouchableOpacity>
@@ -57,6 +59,40 @@ const App = ({ navigation }) => {
         </View>
       </View>
     </SafeAreaView>
+  );
+};
+
+const MultiplayerStack = () => {
+  const MStack = createNativeStackNavigator();
+
+  return (
+    <MStack.Navigator>
+      <MStack.Screen
+        name="Multiplayer"
+        component={Multiplayer}
+        options={{ headerShown: false }}
+      />
+      <MStack.Screen
+        name="Room"
+        component={Room}
+        options={{ headerShown: false }}
+      />
+      <MStack.Screen
+        name="Create Identity"
+        component={CreateIdentity}
+        options={{
+          headerShown: true,
+          headerBackTitle: "Back",
+          headerTitle: "Create a Username",
+          headerTitleStyle: {
+            color: "#fff",
+          },
+          headerStyle: {
+            backgroundColor: "#000",
+          },
+        }}
+      />
+    </MStack.Navigator>
   );
 };
 
@@ -88,8 +124,8 @@ const Router = () => {
           }}
         />
         <Stack.Screen
-          name="Multiplayer"
-          component={Multiplayer}
+          name="Multiplayer Stack"
+          component={MultiplayerStack}
           options={{
             headerShown: false,
           }}
