@@ -84,7 +84,9 @@ const Firebase = {
     try {
       await signInAnonymously(auth);
 
-      await setDoc(doc(db, "users", auth.currentUser.uid), user);
+      const uid = Firebase.getCurrentUser().uid;
+
+      await setDoc(doc(db, "users", uid), user);
 
       return { ...user, uid };
     } catch (err) {
@@ -107,11 +109,34 @@ const Firebase = {
   },
 
   // Join Room
-  joinRoom: async (room) => {
+  joinRoom: async (roomId, user) => {
     try {
-      await setDoc(doc(db, "rooms", room.id), room);
+      // await setDoc(doc(db, "rooms", room.id), room);
 
-      // return room;
+      // // Update Room with player2
+      // await updateDoc(doc(db, "rooms", room.id), {
+      //   players: {
+      //     player1: {
+
+      // Get Room
+      const roomRef = await doc(db, "rooms", roomId);
+      const roomSnap = await getDoc(roomRef);
+
+      if (roomSnap.exists()) {
+        const room = roomSnap.data();
+
+        // Update Room with player2
+        await updateDoc(doc(db, "rooms", roomId), {
+          players: {
+            player1: room.players.player1,
+            player2: {
+              name: user.name,
+              // uid: user.uid,
+              score: 0,
+            },
+          },
+        });
+      }
     } catch (err) {
       console.log("Error @Firebase.joinRoom: ", err.message);
     }
@@ -127,6 +152,29 @@ const Firebase = {
       }
     } catch (err) {
       console.log("Error @Firebase.getGameData: ", err.message);
+    }
+  },
+
+  // Listen to Room Changes
+  listenToRoomChanges: (roomId, callback) => {
+    return onSnapshot(doc(db, "rooms", roomId), (doc) => {
+      callback(doc.data());
+    });
+  },
+
+  // Check if Room Exists
+  checkRoom: async (roomId) => {
+    try {
+      const docRef = await doc(db, "rooms", roomId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      console.log("Error @Firebase.checkRoom: ", err.message);
     }
   },
 };

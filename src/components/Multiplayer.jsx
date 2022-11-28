@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-
+import { AlertBox, fire } from "react-native-alertbox";
 // Context
 import { UserContext } from "../helpers/UserContext";
 import { FirebaseContext } from "../helpers/FirebaseContext";
@@ -32,18 +32,38 @@ const Multiplayer = ({ navigation }) => {
   };
   // console.log(generateRoomID());
 
+  // Join Room State
+  const [roomID, setRoomID] = React.useState("");
+
+  // Prompt for Joining Room
+  const JoinRoom = () => {
+    if (
+      (roomID.length < 4 || roomID.length !== 4) &&
+      !Firebase.checkRoom(roomID)
+    ) {
+      alert("Please enter a valid room ID.");
+    } else {
+      // Join Room
+      Firebase.joinRoom(roomID, User);
+      // Navigate to Room
+      navigation.navigate("Room", { room: roomID });
+    }
+  };
+
+  console.log(User);
+
   // Room Object
   const room = {
     id: generateRoomID(),
     players: {
       player1: {
         name: User.name,
-        uid: User.uid,
+        //  uid: User.uid,
         score: 0,
       },
       player2: {
         name: "waiting",
-        uid: "_blank",
+        // uid: "_blank",
         score: 0,
       },
     },
@@ -63,7 +83,7 @@ const Multiplayer = ({ navigation }) => {
     try {
       await Firebase.createRoom(room);
 
-      navigation.navigate("Room", { room });
+      navigation.navigate("Room", { zoom: room });
     } catch (err) {
       console.log("Error @Multiplayer.createRoom: ", err.message);
     }
