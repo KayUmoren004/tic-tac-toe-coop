@@ -15,6 +15,10 @@ import Multiplayer from "./Multiplayer";
 import Room from "./multi/room/Room";
 import CreateIdentity from "./multi/room/CreateIdentity";
 import Local from "./Local";
+import Loading from "../utils/Loading";
+
+import { UserContext } from "../helpers/UserContext";
+import { useContext } from "react";
 
 const App = ({ navigation }) => {
   return (
@@ -99,7 +103,13 @@ const MultiplayerStack = () => {
 const Router = () => {
   const Stack = createNativeStackNavigator();
 
-  return (
+  const [User] = useContext(UserContext);
+
+  console.log("User: ", User);
+
+  return User.isLoggedIn === null ? (
+    <Loading />
+  ) : (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen

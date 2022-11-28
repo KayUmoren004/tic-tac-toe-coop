@@ -1,3 +1,5 @@
+// TODO: Display room id && give way to share room id
+
 import React from "react";
 
 // Dependencies
@@ -21,6 +23,8 @@ import {
   getDocs,
   onSnapshot,
 } from "firebase/firestore";
+import Column from "../game/Column";
+import GameContainer from "../game/GameContainer";
 // Initialize Firebase
 const app = initializeApp(FirebaseConfig);
 const db = getFirestore(app);
@@ -46,35 +50,27 @@ const Room = ({ navigation, route }) => {
     };
   }, []);
 
-  return (
-    <View style={styles.container}>
-      {room && (
-        <View>
-          <Text style={{ color: "#fff" }}>
-            Player 1: {room.players.player1.name}
-          </Text>
-          <Text style={{ color: "#fff" }}>
-            Player 2: {room.players.player2.name}
-          </Text>
-        </View>
-      )}
-      {/* {
-        // wait for room to load
-        room ? (
-          <View>
-            <Text style={{ color: "#fff" }}>
-              Player 1: {room.players.player1.name}
-            </Text>
-            <Text style={{ color: "#fff" }}>
-              Player 2: {room.players.player2.name}
-            </Text>
-          </View>
-        ) : (
-          <Text style={{ color: "#fff" }}>Loading...</Text>
-        )
-      } */}
-    </View>
-  );
+  // return (
+  //   <View style={styles.container}>
+  //     {
+  //       // wait for room to load
+  //       room ? (
+  //         <View>
+  //           <Text style={{ color: "#fff" }}>
+  //             Player 1: {room.players.player1.name}
+  //           </Text>
+  //           <Text style={{ color: "#fff" }}>
+  //             Player 2: {room.players.player2.name}
+  //           </Text>
+  //         </View>
+  //       ) : (
+  //         <Text style={{ color: "#fff" }}>Loading...</Text>
+  //       )
+  //     }
+  //   </View>
+  // );
+
+  return <GameContainer />;
 };
 
 export default Room;

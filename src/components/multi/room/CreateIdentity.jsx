@@ -28,8 +28,6 @@ const CreateIdentity = ({ navigation }) => {
         name: name,
         uid: User.uid,
       };
-      //setUser({ ...User, name: name });
-      //console.log("User: ", User);
       // Create User
       const user = await Firebase.signUp(createdUser);
       // Set User

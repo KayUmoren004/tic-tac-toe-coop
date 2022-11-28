@@ -141,11 +141,6 @@ const Firebase = {
   getGameData: async (roomId) => {
     try {
       const docRef = await doc(db, "rooms", roomId);
-      // const docSnap = await getDoc(docRef);
-
-      // if (docSnap.exists()) {
-      //   // return docSnap.data();
-      // }
 
       const querySnapshot = await onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
@@ -160,11 +155,11 @@ const Firebase = {
   },
 
   // Listen to Room Changes
-  listenToRoomChanges: (roomId, callback) => {
-    return onSnapshot(doc(db, "rooms", roomId), (doc) => {
-      callback(doc.data());
-    });
-  },
+  // listenToRoomChanges: (roomId, callback) => {
+  //   return onSnapshot(doc(db, "rooms", roomId), (doc) => {
+  //     callback(doc.data());
+  //   });
+  // },
 
   // Check if Room Exists
   checkRoom: async (roomId) => {
@@ -174,11 +169,8 @@ const Firebase = {
 
       if (docSnap.exists()) {
         return true;
-        console.log("Document data:", docSnap.data());
       } else {
         return false;
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
       }
     } catch (err) {
       console.log("Error @Firebase.checkRoom: ", err.message);

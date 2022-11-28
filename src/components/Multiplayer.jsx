@@ -1,3 +1,5 @@
+// TODO: Create Loader for Joining Room and Creating Room
+
 import React from "react";
 
 // Dependencies
@@ -12,7 +14,6 @@ import { AlertBox, fire } from "react-native-alertbox";
 // Context
 import { UserContext } from "../helpers/UserContext";
 import { FirebaseContext } from "../helpers/FirebaseContext";
-import { async } from "@firebase/util";
 
 const Multiplayer = ({ navigation }) => {
   // Context
@@ -31,10 +32,6 @@ const Multiplayer = ({ navigation }) => {
 
     return roomID;
   };
-  // console.log(generateRoomID());
-
-  // Join Room State
-  // const [roomID, setRoomID] = React.useState("");
 
   // Prompt for Joining Room
   const JoinRoom = () => {
@@ -49,21 +46,13 @@ const Multiplayer = ({ navigation }) => {
         {
           text: "Join",
           onPress: async (id) => {
-            // Set Room ID
-            // setRoomID(id.id);
-            //console.log(id.id);
             // Check if room exists
             if (id.id !== "" || id.id !== null || id.id !== undefined) {
-              // console.log("Pre check: ", id.id);
-              // console.log("Room Exists: ", await Firebase.checkRoom(id.id));
               if (await Firebase.checkRoom(id.id)) {
-                // console.log("Post check: ", id.id);
                 // Join Room
                 await Firebase.joinRoom(id.id, User);
-                // console.log("Post join: ", id.id);
                 // Navigate to Room
                 navigation.navigate("Room", { zoomId: id.id });
-                // console.log("Post navigate: ", id.id);
               } else {
                 alert(`Room #${id.id} does not exist.`);
               }
@@ -83,8 +72,6 @@ const Multiplayer = ({ navigation }) => {
       ],
     });
   };
-
-  // console.log(User);
 
   // Room Object
   const room = {
