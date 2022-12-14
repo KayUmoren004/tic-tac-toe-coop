@@ -70,7 +70,13 @@ const Room = ({ navigation, route }) => {
   //   </View>
   // );
 
-  return <GameContainer />;
+  return room ? (
+    <GameContainer data={room} setData={setRoom} />
+  ) : (
+    <View style={styles.container}>
+      <Text style={{ color: "#fff" }}>Loading...</Text>
+    </View>
+  );
 };
 
 export default Room;

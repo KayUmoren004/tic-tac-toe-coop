@@ -16,9 +16,34 @@ import {
 } from "react-native";
 import Column from "./Column";
 
-const GameBoard = ({ navigation }) => {
-  const [p1, setP1] = useState("X");
-  const [p2, setP2] = useState("O");
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import { initializeApp } from "firebase/app";
+import FirebaseConfig from "../../../helpers/config/FirebaseConfig";
+
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  updateDoc,
+  getDoc,
+  deleteDoc,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
+
+// Initialize Firebase
+const app = initializeApp(FirebaseConfig);
+const db = getFirestore(app);
+
+const GameBoard = ({ navigation, data, setData }) => {
+  // const [p1, setP1] = useState("X");
+  // const [p2, setP2] = useState("O");
+
+  const p1 = data.players.player1.name;
+  const p2 = data.players.player2.name;
 
   const player1 = "X";
 
@@ -51,6 +76,8 @@ const GameBoard = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+  // Function to update the board
 
   // Reset Game
   const resetGame = () => {
@@ -98,6 +125,7 @@ const GameBoard = ({ navigation }) => {
         }}
       >
         <Column
+          data={data}
           score={score}
           setScore={setScore}
           players={{

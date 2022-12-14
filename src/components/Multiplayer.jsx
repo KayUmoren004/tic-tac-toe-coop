@@ -84,19 +84,19 @@ const Multiplayer = ({ navigation }) => {
       },
       player2: {
         name: "waiting",
-        // uid: "_blank",
+        uid: "_blank",
         score: 0,
       },
     },
     currentPlayer: "player1",
     currentCell: "_blank",
-    cellsOccupied: {},
+    cellsOccupied: [],
     isDisabled: false,
     winner: "_blank",
     gameID: `${generateRoomID()}-${generateRoomID()}`,
     moves: {
-      player1Moves: {},
-      player2Moves: {},
+      player1Moves: [],
+      player2Moves: [],
     },
   };
   // Create Room

@@ -4,10 +4,10 @@ import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import GameBoard from "./GameBoard";
 
-const GameContainer = ({ navigation }) => {
+const GameContainer = ({ navigation, data, setData }) => {
   return (
     <SafeAreaView style={styles.container}>
-      <GameBoard navigation={navigation} />
+      <GameBoard data={data} setData={setData} navigation={navigation} />
     </SafeAreaView>
   );
 };
