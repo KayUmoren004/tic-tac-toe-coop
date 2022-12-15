@@ -68,6 +68,7 @@ const Multiplayer = ({ navigation }) => {
           name: "id",
           placeholder: "Enter Room ID",
           keyboardType: "default",
+          autoCapitalize: "characters",
         },
       ],
     });
@@ -81,23 +82,26 @@ const Multiplayer = ({ navigation }) => {
         name: User.name,
         uid: User.uid,
         score: 0,
+        symbol: "X",
       },
       player2: {
         name: "waiting",
         uid: "_blank",
         score: 0,
+        symbol: "O",
       },
     },
-    currentPlayer: "player1",
+    currentPlayer: "X",
     currentCell: "_blank",
     cellsOccupied: [],
     isDisabled: false,
-    winner: "_blank",
+    winner: "",
     gameID: `${generateRoomID()}-${generateRoomID()}`,
     moves: {
       player1Moves: [],
       player2Moves: [],
     },
+    creator: User.uid,
   };
   // Create Room
   const createRoom = async () => {

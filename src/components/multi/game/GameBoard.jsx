@@ -63,10 +63,12 @@ const GameBoard = ({ navigation, data, setData }) => {
     p2: 0,
   });
 
-  const p1Score = score.p1;
-  const p2Score = score.p2;
+  const p1Score = data.players.player1.score;
+  const p2Score = data.players.player2.score;
 
   const [winner, setWinner] = useState();
+
+  // On mount, check who created the room, then set the room creator as player 1 and X
 
   // Button for web only
   const WebButton = ({ onPress }) => {
@@ -79,20 +81,95 @@ const GameBoard = ({ navigation, data, setData }) => {
 
   // Function to update the board
 
-  // Reset Game
-  const resetGame = () => {
-    setScore({
-      p1: 0,
-      p2: 0,
-    });
-    setP1Moves([]);
-    setP2Moves([]);
-    setCellsOccupied([]);
-    setCurrentPlayer(player1);
-    setIsDisabled(false);
-    setWinner();
-    setIsDisabled(false);
+  // next round
+  const nextRound = async () => {
+    const docRef = doc(db, "rooms", data.id);
+    // Reset animation
     setAnimation(new Animated.Value(0));
+    await updateDoc(docRef, {
+      // Reset Symbol
+      players: {
+        // player1: {
+        //   name: data.players.player1.name,
+        //   score: data.players.player1.score,
+        //   uid: data.players.player1.uid,
+        //   symbol: "O",
+        // },
+        // player2: {
+        //   name: data.players.player2.name,
+        //   score: data.players.player2.score,
+        //   uid: data.players.player2.uid,
+        //   symbol: "X",
+        // },
+
+        // Swap player 1 and player 2
+        player1: {
+          name: data.players.player2.name,
+          score: data.players.player2.score,
+          uid: data.players.player2.uid,
+          symbol: "X",
+        },
+        player2: {
+          name: data.players.player1.name,
+          score: data.players.player1.score,
+          uid: data.players.player1.uid,
+          symbol: "O",
+        },
+      }, // Reset p1 && p2 moves
+      moves: {
+        player1Moves: [],
+        player2Moves: [],
+      },
+      // Reset cells occupied
+      cellsOccupied: [],
+      // Reset current player
+      currentPlayer: "O",
+      // Reset winner
+      winner: "",
+      // Reset isDisabled
+      isDisabled: false,
+      // Reset current cell
+      currentCell: "",
+    });
+  };
+
+  // Reset Game
+  const resetGame = async () => {
+    const docRef = doc(db, "rooms", data.id);
+    // Reset animation
+    setAnimation(new Animated.Value(0));
+    await updateDoc(docRef, {
+      // Reset ScoreS
+      players: {
+        player1: {
+          name: data.players.player1.name,
+          score: 0,
+          uid: data.players.player1.uid,
+          symbol: "X",
+        },
+        player2: {
+          name: data.players.player2.name,
+          score: 0,
+          uid: data.players.player2.uid,
+          symbol: "O",
+        },
+      },
+      // Reset p1 && p2 moves
+      moves: {
+        player1Moves: [],
+        player2Moves: [],
+      },
+      // Reset cells occupied
+      cellsOccupied: [],
+      // Reset current player
+      currentPlayer: "X",
+      // Reset winner
+      winner: "",
+      // Reset isDisabled
+      isDisabled: false,
+      // Reset current cell
+      currentCell: "",
+    });
   };
 
   return (
@@ -150,7 +227,7 @@ const GameBoard = ({ navigation, data, setData }) => {
           setAnimation={setAnimation}
         />
       </View>
-      {winner && (
+      {data.winner && (
         <View
           style={{
             flexDirection: "row",
@@ -166,7 +243,9 @@ const GameBoard = ({ navigation, data, setData }) => {
           }}
         >
           <Text style={styles.winner}>
-            {winner === "Tie" ? "Tie Game!" : `${winner} is the winner!`}
+            {data.winner === "Tie"
+              ? "Tie Game!"
+              : `${data.winner} is the winner!`}
           </Text>
         </View>
       )}

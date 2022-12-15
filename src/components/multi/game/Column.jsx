@@ -70,12 +70,15 @@ const Column = ({
   const player1 = "X";
   const player2 = "O";
 
+  // Associate data.players.player1.name with player1
+
+  // Associate data.players.player2.name with player2
+
   console.log("data: ", data);
 
   // Functions
-
   const updateBoard = async (cell) => {
-    // Upadate the board
+    // Update the board
     const docRef = doc(db, "rooms", data.id);
     try {
       if (data.currentPlayer === "X") {
@@ -137,6 +140,7 @@ const Column = ({
     // Check if player has won
     // checkForWin();
     //TODO:  Check for winner
+    checkForWin();
   };
 
   // Convert to multi-player compatible
@@ -150,186 +154,12 @@ const Column = ({
     }
   };
 
-  // const cellPressIn = (cellName) => {
-  //   // Check if cell is occupied
-  //   if (cellsOccupied.includes(cellName)) {
-  //     console.log(`${cellName} is occupied`);
-  //   } else {
-  //     // Let User Play in the cell then set the cell to occupied
-  //     setCurrentCell(cellName);
-  //     setCellsOccupied([...cellsOccupied, cellName]);
-  //     setCurrentPlayer(currentPlayer === player1 ? player2 : player1);
-
-  //     // Add move to player's move array
-  //     currentPlayer === player1
-  //       ? setP1Moves([...p1Moves, cellName])
-  //       : setP2Moves([...p2Moves, cellName]);
-  //   }
-
-  //   // Check if player has won
-  //   checkForWin();
-  // };
-
   const cellPressOut = () => {
     checkForWin();
     //TODO:  Check for winner
   };
 
   // TODO: Change to multi-player compatible
-
-  // const checkForWin = () => {
-  //   // check if player 1 wins diagonally using compareArrays
-  //   if (p1Moves.length >= 2) {
-  //     if (
-  //       compareArrays(p1Moves, diagWinCase1) ||
-  //       compareArrays(p1Moves, diagWinCase2)
-  //     ) {
-  //       setWinner(players.p1);
-  //       Animated.timing(animation, {
-  //         toValue: 1,
-  //         duration: 2000,
-  //         useNativeDriver: false,
-  //       }).start();
-  //       setScore({
-  //         p1: score.p1 + 1,
-  //         p2: score.p2,
-  //       });
-  //       console.log(`Diag: ${players.p1} has won!`);
-  //       setIsDisabled(true);
-  //       return false;
-  //     }
-  //   }
-
-  //   // if player 2 wins diagonally
-  //   if (p2Moves.length >= 2) {
-  //     if (
-  //       compareArrays(p2Moves, diagWinCase1) ||
-  //       compareArrays(p2Moves, diagWinCase2)
-  //     ) {
-  //       setWinner(players.p2);
-  //       Animated.timing(animation, {
-  //         toValue: 1,
-  //         duration: 2000,
-  //         useNativeDriver: false,
-  //       }).start();
-  //       setScore({
-  //         p1: score.p1,
-  //         p2: score.p2 + 1,
-  //       });
-  //       console.log(`Diag: ${players.p2} has won!`);
-  //       setIsDisabled(true);
-  //       return false;
-  //     }
-  //   }
-
-  //   // if player 1 wins horizontally
-  //   if (p1Moves.length >= 2) {
-  //     if (
-  //       compareArrays(p1Moves, horWinCase1) ||
-  //       compareArrays(p1Moves, horWinCase2) ||
-  //       compareArrays(p1Moves, horWinCase3)
-  //     ) {
-  //       setWinner(players.p1);
-  //       Animated.timing(animation, {
-  //         toValue: 1,
-  //         duration: 2000,
-  //         useNativeDriver: false,
-  //       }).start();
-  //       setScore({
-  //         p1: score.p1 + 1,
-  //         p2: score.p2,
-  //       });
-  //       console.log(`Hor: ${players.p1} has won!`);
-  //       setIsDisabled(true);
-  //       return false;
-  //     }
-  //   }
-
-  //   // if player 2 wins horizontally
-  //   if (p2Moves.length >= 2) {
-  //     if (
-  //       compareArrays(p2Moves, horWinCase1) ||
-  //       compareArrays(p2Moves, horWinCase2) ||
-  //       compareArrays(p2Moves, horWinCase3)
-  //     ) {
-  //       setWinner(players.p2);
-  //       Animated.timing(animation, {
-  //         toValue: 1,
-  //         duration: 2000,
-  //         useNativeDriver: false,
-  //       }).start();
-  //       setScore({
-  //         p1: score.p1,
-  //         p2: score.p2 + 1,
-  //       });
-  //       console.log(`Hor: ${players.p2} has won!`);
-  //       setIsDisabled(true);
-  //       return false;
-  //     }
-  //   }
-
-  //   // if player 1 wins vertically
-  //   if (p1Moves.length >= 2) {
-  //     if (
-  //       compareArrays(p1Moves, vertWinCase1) ||
-  //       compareArrays(p1Moves, vertWinCase2) ||
-  //       compareArrays(p1Moves, vertWinCase3)
-  //     ) {
-  //       setWinner(players.p1);
-  //       Animated.timing(animation, {
-  //         toValue: 1,
-  //         duration: 2000,
-  //         useNativeDriver: false,
-  //       }).start();
-  //       setScore({
-  //         p1: score.p1 + 1,
-  //         p2: score.p2,
-  //       });
-  //       console.log(`Ver: ${players.p1} has won!`);
-  //       setIsDisabled(true);
-  //       return false;
-  //     }
-  //   }
-
-  //   // if player 2 wins vertically
-  //   if (p2Moves.length >= 2) {
-  //     if (
-  //       compareArrays(p2Moves, vertWinCase1) ||
-  //       compareArrays(p2Moves, vertWinCase2) ||
-  //       compareArrays(p2Moves, vertWinCase3)
-  //     ) {
-  //       setWinner(players.p2);
-  //       Animated.timing(animation, {
-  //         toValue: 1,
-  //         duration: 2000,
-  //         useNativeDriver: false,
-  //       }).start();
-  //       setScore({
-  //         p1: score.p1,
-  //         p2: score.p2 + 1,
-  //       });
-  //       console.log(`Ver: ${players.p2} has won!`);
-  //       setIsDisabled(true);
-  //       return false;
-  //     }
-  //   }
-
-  //   // if no one wins
-  //   if (p1Moves.length + p2Moves.length === 9) {
-  //     setWinner("Tie");
-  //     Animated.timing(animation, {
-  //       toValue: 1,
-  //       duration: 1000,
-  //       useNativeDriver: false,
-  //     }).start();
-  //     setScore({
-  //       p1: score.p1 + 0,
-  //       p2: score.p2 + 0,
-  //     });
-  //     console.log("Tie!");
-  //     setIsDisabled(true);
-  //   }
-  // };
 
   const checkForWin = async () => {
     // if player 1 wins diagonally
@@ -363,7 +193,7 @@ const Column = ({
             },
           },
         });
-        console.log(`Diag: ${players.p1} has won!`);
+        console.log(`Diag: ${data.players.player1.name} has won!`);
         // Disable board
         await updateDoc(docRef, {
           isDisabled: true,
@@ -403,7 +233,7 @@ const Column = ({
             },
           },
         });
-        console.log(`Diag: ${players.p2} has won!`);
+        console.log(`Diag: ${data.players.player2.name} has won!`);
         // Disable board
         await updateDoc(docRef, {
           isDisabled: true,
@@ -444,7 +274,7 @@ const Column = ({
             },
           },
         });
-        console.log(`Hor: ${players.p1} has won!`);
+        console.log(`Hor: ${data.players.player1.name} has won!`);
         // Disable board
         await updateDoc(docRef, {
           isDisabled: true,
@@ -485,7 +315,7 @@ const Column = ({
             },
           },
         });
-        console.log(`Hor: ${players.p2} has won!`);
+        console.log(`Hor: ${data.players.player2.name} has won!`);
         // Disable board
         await updateDoc(docRef, {
           isDisabled: true,
@@ -497,9 +327,9 @@ const Column = ({
     // if player 1 wins vertically
     if (data.moves.player1Moves.length >= 2) {
       if (
-        compareArrays(data.moves.player1Moves, verWinCase1) ||
-        compareArrays(data.moves.player1Moves, verWinCase2) ||
-        compareArrays(data.moves.player1Moves, verWinCase3)
+        compareArrays(data.moves.player1Moves, vertWinCase1) ||
+        compareArrays(data.moves.player1Moves, vertWinCase2) ||
+        compareArrays(data.moves.player1Moves, vertWinCase3)
       ) {
         const docRef = doc(db, "rooms", data.id);
         // Set Winner to Player 1
@@ -526,7 +356,7 @@ const Column = ({
             },
           },
         });
-        console.log(`Ver: ${players.p1} has won!`);
+        console.log(`Ver: ${data.players.player1.name} has won!`);
         // Disable board
         await updateDoc(docRef, {
           isDisabled: true,
@@ -538,9 +368,9 @@ const Column = ({
     // if player 2 wins vertically
     if (data.moves.player2Moves.length >= 2) {
       if (
-        compareArrays(data.moves.player2Moves, verWinCase1) ||
-        compareArrays(data.moves.player2Moves, verWinCase2) ||
-        compareArrays(data.moves.player2Moves, verWinCase3)
+        compareArrays(data.moves.player2Moves, vertWinCase1) ||
+        compareArrays(data.moves.player2Moves, vertWinCase2) ||
+        compareArrays(data.moves.player2Moves, vertWinCase3)
       ) {
         const docRef = doc(db, "rooms", data.id);
         // Set Winner to Player 2
@@ -567,7 +397,7 @@ const Column = ({
             },
           },
         });
-        console.log(`Ver: ${players.p2} has won!`);
+        console.log(`Ver: ${data.players.player2.name} has won!`);
         // Disable board
         await updateDoc(docRef, {
           isDisabled: true,
@@ -600,14 +430,6 @@ const Column = ({
   // STOP
 
   // TODO: Change for multiplayer
-  // const setInput = (cellName) => {
-  //   return p1Moves.includes(cellName)
-  //     ? "X"
-  //     : "" || p2Moves.includes(cellName)
-  //     ? "O"
-  //     : "";
-  // };
-
   const setInput = (cellName) => {
     return data.moves.player1Moves.includes(cellName)
       ? "X"
@@ -620,14 +442,6 @@ const Column = ({
 
   // Dynamically set text color based on player turn
   const setTextColor = (cellName) => {
-    // return currentPlayer === player1
-    //   ? p1Moves.includes(cellName)
-    //     ? "#00b0ffff"
-    //     : "#e0bad7ff"
-    //   : p2Moves.includes(cellName)
-    //   ? "#e0bad7ff"
-    //   : "#00b0ffff";
-
     return data.currentPlayer === "X"
       ? data.moves.player1Moves.includes(cellName)
         ? "#00b0ffff"
@@ -641,23 +455,12 @@ const Column = ({
 
   // Dynamically change background color based on the winner
   const setBoardColor = () => {
-    // switch (winner) {
-    //   case players.p1:
-    //     return p1Wins;
-    //   case players.p2:
-    //     return p2Wins;
-    //   case "Tie":
-    //     return tie;
-    //   default:
-    //     return styles.container;
-    // }
-
     switch (data.winner) {
-      case "X":
+      case data.players.player1.name:
         return p1Wins;
       case "O":
         return p2Wins;
-      case "Tie":
+      case data.players.player2.name:
         return tie;
       default:
         return styles.container;
