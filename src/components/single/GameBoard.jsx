@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 // Dependencies
 import {
@@ -6,11 +6,9 @@ import {
   Text,
   View,
   SafeAreaView,
-  Alert,
   Button,
   Animated,
   Platform,
-  TouchableOpacity,
 } from "react-native";
 import Column from "./Column";
 
@@ -66,7 +64,7 @@ const GameBoard = ({ navigation }) => {
     setP1Moves([]);
     setP2Moves([]);
     setCellsOccupied([]);
-    setCurrentPlayer(player1);
+    setCurrentPlayer(player2);
     setIsDisabled(false);
     setWinner();
     setIsDisabled(false);
@@ -114,7 +112,6 @@ const GameBoard = ({ navigation }) => {
           setWinner={setWinner}
           currentPlayer={currentPlayer}
           setCurrentPlayer={setCurrentPlayer}
-          currentCell={currentCell}
           setCurrentCell={setCurrentCell}
           cellsOccupied={cellsOccupied}
           setCellsOccupied={setCellsOccupied}
@@ -125,7 +122,6 @@ const GameBoard = ({ navigation }) => {
           p2Moves={p2Moves}
           setP2Moves={setP2Moves}
           animation={animation}
-          setAnimation={setAnimation}
         />
       </View>
       {winner && (
@@ -140,7 +136,6 @@ const GameBoard = ({ navigation }) => {
             borderTopColor: winnerColor(winner),
             padding: 10,
             backgroundColor: winnerColor(winner),
-            // top: 0,
           }}
         >
           <Text style={styles.winner}>
@@ -158,7 +153,6 @@ const GameBoard = ({ navigation }) => {
           borderTopColor: winnerColor(winner),
           paddingBottom: 10,
           paddingTop: 10,
-          // top: 0,
         }}
       >
         {Platform.OS === "web" ? (
@@ -171,7 +165,7 @@ const GameBoard = ({ navigation }) => {
               flex: 1,
             }}
           >
-            <Button title="Next Round" onPress={() => nextRound()} />
+            {/* <Button title="Next Round" onPress={() => nextRound()} /> */}
             <Button title="Reset" color="red" onPress={() => resetGame()} />
           </View>
         )}

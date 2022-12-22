@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 // Dependencies
-import { StyleSheet, View, Animated } from "react-native";
+import { StyleSheet, View, Animated, TouchableOpacity } from "react-native";
 
 import {
   LeftColumn,
@@ -34,6 +34,9 @@ import {
 const app = initializeApp(FirebaseConfig);
 const db = getFirestore(app);
 
+// Context
+import { UserContext } from "../../../helpers/UserContext";
+
 import {
   diagWinCase1,
   diagWinCase2,
@@ -45,35 +48,9 @@ import {
   vertWinCase3,
 } from "../../../utils/Wins";
 
-const Column = ({
-  // score,
-  // setScore,
-  // players,
-  // winner,
-  // setWinner,
-  // p1Moves,
-  // p2Moves,
-  // setP1Moves,
-  // setP2Moves,
-  // isDisabled,
-  // setIsDisabled,
-  // cellsOccupied,
-  // setCellsOccupied,
-  // currentCell,
-  // setCurrentCell,
-  // currentPlayer,
-  // setCurrentPlayer,
-  animation,
-  setAnimation,
-  data,
-}) => {
-  const player1 = "X";
-  const player2 = "O";
-
-  // Associate data.players.player1.name with player1
-
-  // Associate data.players.player2.name with player2
-
+const Column = ({ animation, data }) => {
+  // Context
+  const [User] = React.useContext(UserContext);
   console.log("data: ", data);
 
   // Functions
@@ -87,6 +64,8 @@ const Column = ({
           currentCell: cell,
           // Add cell to cells occupied
           cellsOccupied: [...data.cellsOccupied, cell],
+          // Set blocked player to player 1
+          blockedPlayer: data.players.player1.uid,
           // Set current player to player 2
           currentPlayer: "O",
           // Add cell to player 1 moves
@@ -102,6 +81,8 @@ const Column = ({
           currentCell: cell,
           // Add cell to cells occupied
           cellsOccupied: [...data.cellsOccupied, cell],
+          // Set blocked player to player 2
+          blockedPlayer: data.players.player2.uid,
           // Set current player to player 1
           currentPlayer: "X",
           // Add cell to player 2 moves
@@ -134,27 +115,49 @@ const Column = ({
     return false;
   };
 
-  // START: May compatible for online multiplayer
+  // START: Make compatible for online multiplayer
 
   const cellPress = () => {
     // Check if player has won
-    // checkForWin();
+    // TODO: Check for blocked player
     //TODO:  Check for winner
     checkForWin();
   };
 
   // Convert to multi-player compatible
   const cellPressIn = (cellName) => {
-    // Check if cell is occupied
-    if (data.cellsOccupied.includes(cellName)) {
-      return;
+    // TODO: Check for blocked player
+
+    if (data.currentPlayer === "X") {
+      // check if blocked player is player 1
+      if (data.blockedPlayer === data.players.player1.uid) {
+        return;
+      } else {
+        if (data.cellsOccupied.includes(cellName)) {
+          return;
+        } else {
+          // Update the board
+          updateBoard(cellName);
+        }
+      }
     } else {
-      // Update the board
-      updateBoard(cellName);
+      // check if blocked player is player 2
+      if (data.blockedPlayer === data.players.player2.uid) {
+        return;
+      } else {
+        if (data.cellsOccupied.includes(cellName)) {
+          return;
+        } else {
+          // Update the board
+          updateBoard(cellName);
+        }
+      }
     }
   };
 
   const cellPressOut = () => {
+    // TODO: Check for blocked player
+
     checkForWin();
     //TODO:  Check for winner
   };
@@ -505,6 +508,17 @@ const Column = ({
     borderRadius: 25 / 2,
   };
 
+  const disableCell = () => {
+    if (data.isDisabled) {
+      return true;
+    }
+
+    if (User.uid === data.blockedPlayer) {
+      return true;
+    }
+
+    return false;
+  };
   return (
     <Animated.View style={setBoardColor()}>
       <View>
@@ -519,7 +533,7 @@ const Column = ({
                 onPressIn={() => cellPressIn(cellName)}
                 onPressOut={() => cellPressOut()}
                 input={setInput(cellName)}
-                isDisabled={data.isDisabled}
+                isDisabled={disableCell()}
                 textColor={setTextColor(cellName)}
               />
             );
@@ -538,7 +552,7 @@ const Column = ({
                 onPressIn={() => cellPressIn(cellName)}
                 onPressOut={() => cellPressOut()}
                 input={setInput(cellName)}
-                isDisabled={data.isDisabled}
+                isDisabled={disableCell()}
                 textColor={setTextColor(cellName)}
               />
             );
@@ -557,7 +571,7 @@ const Column = ({
                 onPressIn={() => cellPressIn(cellName)}
                 onPressOut={() => cellPressOut()}
                 input={setInput(cellName)}
-                isDisabled={data.isDisabled}
+                isDisabled={disableCell()}
                 textColor={setTextColor(cellName)}
               />
             );

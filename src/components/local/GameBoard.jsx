@@ -6,7 +6,6 @@ import {
   Text,
   View,
   SafeAreaView,
-  Alert,
   Button,
   Animated,
   Platform,
@@ -20,6 +19,7 @@ const GameBoard = ({ navigation }) => {
   const [p2, setP2] = useState("O");
 
   const player1 = "X";
+  const player2 = "O";
 
   // State
   const [currentPlayer, setCurrentPlayer] = useState(player1);
@@ -27,6 +27,7 @@ const GameBoard = ({ navigation }) => {
   const [cellsOccupied, setCellsOccupied] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
   const [animation, setAnimation] = useState(new Animated.Value(0));
+  const [firstPlayer, setFirstPlayer] = useState(player1);
 
   // Player Move States
   const [p1Moves, setP1Moves] = useState([]);
@@ -91,37 +92,25 @@ const GameBoard = ({ navigation }) => {
     promptPlayer1();
   }, []);
 
-  // Constantly check for winner
-  // useEffect(() => {
-  //   // Limit to 3 wins
-  //   if (score.p1 === 3) {
-  //     Alert.alert(
-  //       `${winner} won🙌🏿`,
-  //       `You beat ${p2}😔`,
-  //       [
-  //         {
-  //           text: "Reset",
-  //           onPress: () => resetGame(),
-  //           style: "destructive",
-  //         },
-  //       ],
-  //       { cancelable: false }
-  //     );
-  //   } else if (score.p2 === 3) {
-  //     Alert.alert(
-  //       `${winner} won🙌🏿`,
-  //       `You beat ${p1}😔`,
-  //       [
-  //         {
-  //           text: "Reset",
-  //           onPress: () => resetGame(),
-  //           style: "destructive",
-  //         },
-  //       ],
-  //       { cancelable: false }
-  //     );
+  // // Determine first player on next round
+  // const determineFirstPlayer = () => {
+  //   if (firstPlayer === player1) {
+  //     return player2;
+  //   } else {
+  //     return player1;
   //   }
-  // }, [score]);
+  // };
+
+  // const nextRound = async () => {
+  //   setP1Moves([]);
+  //   setP2Moves([]);
+  //   setCellsOccupied([]);
+  //  //  setCurrentPlayer(determineFirstPlayer());
+  //   setIsDisabled(false);
+  //   setWinner();
+  //   setIsDisabled(false);
+  //   setAnimation(new Animated.Value(0));
+  // };
 
   // Reset Game
   const resetGame = () => {
@@ -180,7 +169,6 @@ const GameBoard = ({ navigation }) => {
           setWinner={setWinner}
           currentPlayer={currentPlayer}
           setCurrentPlayer={setCurrentPlayer}
-          currentCell={currentCell}
           setCurrentCell={setCurrentCell}
           cellsOccupied={cellsOccupied}
           setCellsOccupied={setCellsOccupied}
@@ -191,7 +179,6 @@ const GameBoard = ({ navigation }) => {
           p2Moves={p2Moves}
           setP2Moves={setP2Moves}
           animation={animation}
-          setAnimation={setAnimation}
         />
       </View>
       {winner && (
@@ -237,7 +224,7 @@ const GameBoard = ({ navigation }) => {
               flex: 1,
             }}
           >
-            <Button title="Next Round" onPress={() => nextRound()} />
+            {/* <Button title="Next Round" onPress={() => nextRound()} /> */}
             <Button title="Reset" color="red" onPress={() => resetGame()} />
           </View>
         )}

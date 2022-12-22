@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 // Dependencies
 import { StyleSheet, View, Animated } from "react-native";
@@ -36,83 +36,68 @@ const Column = ({
   setIsDisabled,
   cellsOccupied,
   setCellsOccupied,
-  currentCell,
   setCurrentCell,
   currentPlayer,
   setCurrentPlayer,
   animation,
-  setAnimation,
 }) => {
   const player1 = "X";
   const player2 = "O";
   let botMoveCount = 0;
 
-  // Convert bot random number to cell name from left to right
-  const numberToCell = (number) => {
-    switch (number) {
-      case 0:
-        return "LTE";
-
-      case 1:
-        return "CTC";
-
-      case 2:
-        return "RTE";
-
-      case 3:
-        return "LME";
-
-      case 4:
-        return "CMC";
-
-      case 5:
-        return "RME";
-
-      case 6:
-        return "LBE";
-
-      case 7:
-        return "CBC";
-
-      case 8:
-        return "RBE";
-
-      default:
-        return "CMC";
-    }
-  };
-
   // Bot for player 2
   const bot = () => {
-    // Get random number between 0 and 8
-    const random = Math.floor(Math.random() * 9);
+    const wins = [
+      diagWinCase1,
+      diagWinCase2,
+      horWinCase1,
+      horWinCase2,
+      horWinCase3,
+      vertWinCase1,
+      vertWinCase2,
+      vertWinCase3,
+    ];
 
-    // Number to cells
-    const cell = numberToCell(random);
-    return cell;
+    const availableCells = CellNames.filter(
+      (cellName) => !cellsOccupied.includes(cellName)
+    );
 
-    // // Check if cell is occupied
-    // const isOccupied = cellsOccupied.includes(cell);
+    // Check for winning moves for player 2 || Bot
+    for (let i = 0; i < wins.length; i++) {
+      const winCombination = wins[i];
+      const count = winCombination.reduce((acc, cellName) => {
+        return p2Moves.includes(cellName) ? acc + 1 : acc;
+      }, 0);
 
-    // // If cell is occupied, run bot again
-    // if (isOccupied) {
-    //   bot();
-    // } else {
-    //   // If cell is not occupied, set cell to current cell
-    //   setCurrentCell(cell);
+      if (count === 2) {
+        const availableCell = winCombination.find(
+          (cellName) => !p2Moves.includes(cellName)
+        );
+        if (availableCell && availableCells.includes(availableCell)) {
+          return availableCell;
+        }
+      }
+    }
 
-    //   // Set current player to player 2
-    //   setCurrentPlayer(player2);
+    // Check for blocking moves for player 1
+    for (let i = 0; i < wins.length; i++) {
+      const winCombination = wins[i];
+      const count = winCombination.reduce((acc, cellName) => {
+        return p1Moves.includes(cellName) ? acc + 1 : acc;
+      }, 0);
 
-    //   // Set cell to occupied
-    //   setCellsOccupied([...cellsOccupied, cell]);
+      if (count === 2) {
+        const availableCell = winCombination.find(
+          (cellName) => !p1Moves.includes(cellName)
+        );
+        if (availableCell && availableCells.includes(availableCell)) {
+          return availableCell;
+        }
+      }
+    }
 
-    //   // Set player 2 moves
-    //   setP2Moves([...p2Moves, cell]);
-
-    //   // Set current player to player 1
-    //   setCurrentPlayer(player1);
-    // }
+    // If no winning or blocking moves are available, choose a random move
+    return availableCells[Math.floor(Math.random() * availableCells.length)];
   };
 
   // Functions
@@ -132,35 +117,6 @@ const Column = ({
     return false;
   };
 
-  // const cellPress = () => {
-  //   // Check if player has won
-  //   checkForWin();
-  // };
-
-  // const cellPressIn = (cellName) => {
-  //   // // Check if cell is occupied
-  //   // if (cellsOccupied.includes(cellName)) {
-  //   //   console.log(`${cellName} is occupied`);
-  //   // } else {
-  //   //   // Let User Play in the cell then set the cell to occupied
-  //   //   setCurrentCell(cellName);
-  //   //   setCellsOccupied([...cellsOccupied, cellName]);
-  //   //   setCurrentPlayer(currentPlayer === player1 ? player2 : player1);
-
-  //   //   // Add move to player's move array
-  //   //   currentPlayer === player1
-  //   //     ? setP1Moves([...p1Moves, cellName])
-  //   //     : setP2Moves([...p2Moves, cellName]);
-  //   // }
-
-  //   // // Check if player has won
-  //   // checkForWin();
-  // };
-
-  // const cellPressOut = () => {
-  //   checkForWin();
-  // };
-
   // Function to handle game login
 
   const cellPress = () => {
@@ -172,28 +128,8 @@ const Column = ({
     checkForWin();
   };
 
-  // const cellPressIn = (cellName) => {
-  //   // Check if cell is occupied
-  //   if (cellsOccupied.includes(cellName)) {
-  //     console.log(`${cellName} is occupied`);
-  //   } else {
-  //     // Let User Play in the cell then set the cell to occupied
-  //     setCurrentCell(cellName);
-  //     setCellsOccupied([...cellsOccupied, cellName]);
-  //     setCurrentPlayer(currentPlayer === player1 ? player2 : player1);
-
-  //     // Add move to player's move array
-  //     currentPlayer === player1
-  //       ? setP1Moves([...p1Moves, cellName])
-  //       : setP2Moves([...p2Moves, cellName]);
-  //   }
-  // };
-
   // Game Logic
   const cellPressIn = (cellName) => {
-    // First player is player 1
-    // Second player is player 2 == bot
-
     // Check if cell is occupied
     if (cellsOccupied.includes(cellName)) {
       console.log(`${cellName} is occupied`);
@@ -203,23 +139,14 @@ const Column = ({
         // Let User Play in the cell then set the cell to occupied
         setCurrentCell(cellName);
         setCellsOccupied([...cellsOccupied, cellName]);
-        // setCurrentPlayer(currentPlayer === player1 ? player2 : player1);
         setP1Moves([...p1Moves, cellName]);
         setCurrentPlayer(player2);
-
-        // Add move to player's move array
-        // currentPlayer === player1
-        //   ? setP1Moves([...p1Moves, cellName])
-        //   : setP2Moves([...p2Moves, cellName]);
       }
     }
   };
 
   useEffect(() => {
     if (currentPlayer === player2 && p2Moves.length < 4) {
-      // Run bot
-      // const cell = bot();
-
       let cell;
 
       do {
@@ -236,43 +163,9 @@ const Column = ({
         setP2Moves([...p2Moves, cell]);
         setCurrentPlayer(player1);
         botMoveCount++;
-
-        // Add move to player's move array
-        // currentPlayer === player1
-        //   ? setP1Moves([...p1Moves, cell])
-        //   : setP2Moves([...p2Moves, cell]);
       }
     }
   }, [currentPlayer]);
-
-  // Set cell input to each player Value
-
-  // console.log(isDisabled);
-  // const lastCell = CellNames.filter((cell) => !cellsOccupied.includes(cell));
-  // console.log("Last Cell: ", lastCell);
-  // console.log("User moves: ", p1Moves);
-  // console.log("Bot moves: ", p2Moves);
-
-  // useEffect(() => {
-  //   if (
-  //     currentPlayer === player2 &&
-  //     (winner === null || winner === "" || winner === undefined) &&
-  //     cellsOccupied.length === 8
-  //   ) {
-  //     // Get the cell that is not occupied between left, right and center
-  //     const cell = LeftColumn.concat(RightColumn, CenterColumn).filter(
-  //       (cell) => !cellsOccupied.includes(cell)
-  //     );
-  //     // Set current cell to the cell that is not occupied
-  //     setCurrentCell(cell[0]);
-  //     // Set the cell to occupied
-  //     setCellsOccupied([...cellsOccupied, cell[0]]);
-  //     // Set current player to player 1
-  //     setCurrentPlayer(player1);
-  //     // Add move to player's move array
-  //     setP1Moves([...p1Moves, cell[0]]);
-  //   }
-  // }, [currentPlayer]);
 
   const checkForWin = () => {
     // check if player 1 wins diagonally using compareArrays
@@ -427,37 +320,6 @@ const Column = ({
       setIsDisabled(true);
     }
   };
-
-  // const setInput = (cellName) => {
-  //   // return p1Moves.includes(cellName)
-  //   //   ? "X"
-  //   //   : "" || p2Moves.includes(cellName)
-  //   //   ? "O"
-  //   //   : "";
-  //   if (botMoveCount === 4) {
-  //     return "X";
-  //   } else {
-  //     return p1Moves.includes(cellName)
-  //       ? "X"
-  //       : "" || p2Moves.includes(cellName)
-  //       ? "O"
-  //       : "";
-  //   }
-
-  //   botMoveCount === 4
-  //     ? "X"
-  //     : p1Moves.includes(cellName)
-  //     ? "X"
-  //     : "" || p2Moves.includes(cellName)
-  //     ? "O"
-  //     : "";
-  // };
-
-  // console.log(isDisabled);
-  // const lastCell = CellNames.filter((cell) => !cellsOccupied.includes(cell));
-  // console.log("Last Cell: ", lastCell);
-  // console.log("User moves: ", p1Moves);
-  // console.log("Bot moves: ", p2Moves);
 
   // Dynamically set text color based on player turn
   const setTextColor = (cellName) => {

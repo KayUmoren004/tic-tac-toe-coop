@@ -50,28 +50,8 @@ const Room = ({ navigation, route }) => {
     };
   }, []);
 
-  // return (
-  //   <View style={styles.container}>
-  //     {
-  //       // wait for room to load
-  //       room ? (
-  //         <View>
-  //           <Text style={{ color: "#fff" }}>
-  //             Player 1: {room.players.player1.name}
-  //           </Text>
-  //           <Text style={{ color: "#fff" }}>
-  //             Player 2: {room.players.player2.name}
-  //           </Text>
-  //         </View>
-  //       ) : (
-  //         <Text style={{ color: "#fff" }}>Loading...</Text>
-  //       )
-  //     }
-  //   </View>
-  // );
-
   return room ? (
-    <GameContainer data={room} setData={setRoom} />
+    <GameContainer navigation={navigation} data={room} setData={setRoom} />
   ) : (
     <View style={styles.container}>
       <Text style={{ color: "#fff" }}>Loading...</Text>

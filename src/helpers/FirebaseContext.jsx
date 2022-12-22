@@ -121,6 +121,8 @@ const Firebase = {
       if (roomSnap.exists()) {
         const room = roomSnap.data();
 
+        // TODO: Determine which player is joining and if room is full
+
         // Update Room with player2
         await updateDoc(doc(db, "rooms", roomId), {
           players: {
@@ -131,6 +133,8 @@ const Firebase = {
               score: 0,
             },
           },
+          blockedPlayer: user.uid,
+          isDisabled: false,
         });
       }
     } catch (err) {
@@ -153,13 +157,6 @@ const Firebase = {
       console.log("Error @Firebase.getGameData: ", err.message);
     }
   },
-
-  // Listen to Room Changes
-  // listenToRoomChanges: (roomId, callback) => {
-  //   return onSnapshot(doc(db, "rooms", roomId), (doc) => {
-  //     callback(doc.data());
-  //   });
-  // },
 
   // Check if Room Exists
   checkRoom: async (roomId) => {

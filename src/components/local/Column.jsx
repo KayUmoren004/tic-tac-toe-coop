@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 // Dependencies
 import { StyleSheet, View, Animated } from "react-native";
 
@@ -31,12 +29,10 @@ const Column = ({
   setIsDisabled,
   cellsOccupied,
   setCellsOccupied,
-  currentCell,
   setCurrentCell,
   currentPlayer,
   setCurrentPlayer,
   animation,
-  setAnimation,
 }) => {
   const player1 = "X";
   const player2 = "O";
@@ -240,11 +236,6 @@ const Column = ({
       setIsDisabled(true);
     }
   };
-
-  // console.log({
-  //   "Player 1 Moves": p1Moves,
-  //   "Player 2 Moves": p2Moves,
-  // });
 
   const setInput = (cellName) => {
     return p1Moves.includes(cellName)

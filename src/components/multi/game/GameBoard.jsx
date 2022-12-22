@@ -38,6 +38,8 @@ import {
 const app = initializeApp(FirebaseConfig);
 const db = getFirestore(app);
 
+import { UserContext } from "../../../helpers/UserContext";
+
 const GameBoard = ({ navigation, data, setData }) => {
   // const [p1, setP1] = useState("X");
   // const [p2, setP2] = useState("O");
@@ -49,9 +51,7 @@ const GameBoard = ({ navigation, data, setData }) => {
 
   // State
   const [currentPlayer, setCurrentPlayer] = useState(player1);
-  const [currentCell, setCurrentCell] = useState("");
-  const [cellsOccupied, setCellsOccupied] = useState([]);
-  const [isDisabled, setIsDisabled] = useState(false);
+
   const [animation, setAnimation] = useState(new Animated.Value(0));
 
   // Player Move States
@@ -67,6 +67,8 @@ const GameBoard = ({ navigation, data, setData }) => {
   const p2Score = data.players.player2.score;
 
   const [winner, setWinner] = useState();
+
+  const [User] = React.useContext(UserContext);
 
   // On mount, check who created the room, then set the room creator as player 1 and X
 
@@ -130,6 +132,8 @@ const GameBoard = ({ navigation, data, setData }) => {
       isDisabled: false,
       // Reset current cell
       currentCell: "",
+      // Reset blocked player to player 1
+      blockedPlayer: data.players.player1.uid,
     });
   };
 
@@ -169,7 +173,49 @@ const GameBoard = ({ navigation, data, setData }) => {
       isDisabled: false,
       // Reset current cell
       currentCell: "",
+      // Reset blocked player to player 2
+      blockedPlayer: data.players.player2.uid,
     });
+  };
+
+  // Leave Game
+  const leaveGame = async () => {
+    // Determine which player is leaving
+    const playerLeaving =
+      User.uid === data.players.player1.uid ? "player1" : "player2";
+
+    // Update the room
+    const docRef = doc(db, "rooms", data.id);
+
+    if (playerLeaving === "player1") {
+      await updateDoc(docRef, {
+        players: {
+          player1: {
+            name: "waiting",
+            score: data.players.player1.score,
+            uid: "",
+            symbol: "X",
+          },
+          ...data.players.player2,
+        },
+        // Reset isDisabled
+        isDisabled: true,
+      });
+    } else {
+      await updateDoc(docRef, {
+        players: {
+          ...data.players.player1,
+          player2: {
+            name: "",
+            score: data.players.player2.score,
+            uid: "",
+            symbol: "O",
+          },
+        },
+        // Reset isDisabled
+        isDisabled: true,
+      });
+    }
   };
 
   return (
@@ -196,38 +242,27 @@ const GameBoard = ({ navigation, data, setData }) => {
 
       <View
         style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 10,
+          // top: 0,
+        }}
+      >
+        <Text style={styles.turn}>Game: {data.id}</Text>
+      </View>
+
+      {/* Board */}
+      <View
+        style={{
           flex: 1,
           justifyContent: "space-around",
           alignItems: "center",
         }}
       >
-        <Column
-          data={data}
-          score={score}
-          setScore={setScore}
-          players={{
-            p1,
-            p2,
-          }}
-          winner={winner}
-          setWinner={setWinner}
-          currentPlayer={currentPlayer}
-          setCurrentPlayer={setCurrentPlayer}
-          currentCell={currentCell}
-          setCurrentCell={setCurrentCell}
-          cellsOccupied={cellsOccupied}
-          setCellsOccupied={setCellsOccupied}
-          isDisabled={isDisabled}
-          setIsDisabled={setIsDisabled}
-          p1Moves={p1Moves}
-          setP1Moves={setP1Moves}
-          p2Moves={p2Moves}
-          setP2Moves={setP2Moves}
-          animation={animation}
-          setAnimation={setAnimation}
-        />
+        <Column data={data} animation={animation} />
       </View>
-      {data.winner && (
+      {data.winner ? (
         <View
           style={{
             flexDirection: "row",
@@ -246,6 +281,28 @@ const GameBoard = ({ navigation, data, setData }) => {
             {data.winner === "Tie"
               ? "Tie Game!"
               : `${data.winner} is the winner!`}
+          </Text>
+        </View>
+      ) : (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            // borderBottomWidth: 0.5,
+            // borderBottomColor: winnerColor(winner),
+            // borderTopWidth: 1,
+            // borderTopColor: winnerColor(winner),
+            padding: 5,
+            // backgroundColor: winnerColor(winner),
+            // top: 0,
+          }}
+        >
+          <Text style={styles.turn}>
+            {currentPlayer === "X"
+              ? data.players.player1.name
+              : data.players.player2.name}
+            {"'s Turn"}
           </Text>
         </View>
       )}
@@ -272,7 +329,7 @@ const GameBoard = ({ navigation, data, setData }) => {
               flex: 1,
             }}
           >
-            <Button title="Next Round" onPress={() => nextRound()} />
+            {/* <Button title="Next Round" onPress={() => nextRound()} /> */}
             <Button title="Reset" color="red" onPress={() => resetGame()} />
           </View>
         )}
@@ -291,7 +348,31 @@ const GameBoard = ({ navigation, data, setData }) => {
         <Button
           title="Back"
           color="green"
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            // alert to determine if they want to leave
+            // If they do, reset the game
+            // If they don't, do nothing
+            Alert.alert(
+              "Are you sure you want to leave?",
+              "If you leave, you will lose your progress.",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel",
+                },
+                {
+                  text: "Leave",
+                  onPress: () => {
+                    leaveGame();
+                    navigation.goBack();
+                  },
+                  style: "destructive",
+                },
+              ],
+              { cancelable: false }
+            );
+          }}
         />
       </View>
     </SafeAreaView>
@@ -336,6 +417,13 @@ const styles = StyleSheet.create({
   },
   winner: {
     color: "#000",
+    fontSize: 30,
+    // fontFamily: "MontserratLight",
+    textAlign: "center",
+    paddingBottom: 10,
+  },
+  turn: {
+    color: "#fff",
     fontSize: 30,
     // fontFamily: "MontserratLight",
     textAlign: "center",

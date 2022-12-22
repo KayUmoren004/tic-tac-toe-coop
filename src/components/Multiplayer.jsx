@@ -92,9 +92,9 @@ const Multiplayer = ({ navigation }) => {
       },
     },
     currentPlayer: "X",
-    currentCell: "_blank",
+    currentCell: "",
     cellsOccupied: [],
-    isDisabled: false,
+    isDisabled: true,
     winner: "",
     gameID: `${generateRoomID()}-${generateRoomID()}`,
     moves: {
@@ -102,6 +102,7 @@ const Multiplayer = ({ navigation }) => {
       player2Moves: [],
     },
     creator: User.uid,
+    boardDisabled: false,
   };
   // Create Room
   const createRoom = async () => {
