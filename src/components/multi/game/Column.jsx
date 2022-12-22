@@ -51,7 +51,6 @@ import {
 const Column = ({ animation, data }) => {
   // Context
   const [User] = React.useContext(UserContext);
-  console.log("data: ", data);
 
   // Functions
   const updateBoard = async (cell) => {

@@ -104,8 +104,6 @@ const Router = () => {
 
   const [User] = useContext(UserContext);
 
-  console.log("User: ", User);
-
   return User.isLoggedIn === null ? (
     <Loading />
   ) : (

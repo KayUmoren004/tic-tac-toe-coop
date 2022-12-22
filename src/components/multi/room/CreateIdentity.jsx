@@ -68,7 +68,6 @@ const CreateIdentity = ({ navigation }) => {
               name.length < 15 &&
               name !== ""
             ) {
-              console.log("name: ", name);
               setUser({
                 ...User,
                 name: name,
