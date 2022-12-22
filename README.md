@@ -10,7 +10,7 @@
 </p>
 
 > A simple tic-tac-toe game made with React Native
-### 🏠 [Homepage](https://github.com/KayUmoren004/tic-tac-toe)
+### 🏠 [Homepage](https://github.com/KayUmoren004/tic-tac-toe-coop)
 
 ### ✨ [Demo](https://i.imgur.com/64VJCkQ.mp4)
 
