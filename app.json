@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "tic-tac-toe-coop",
+    "name": "Tic-Tac-Toe",
     "slug": "tic-tac-toe-coop",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#00b0ff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -18,16 +18,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.godsonumoren.tic-tac-toe",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#00b0ff"
+      },
+      "package": "com.godsonumoren.tictactoe",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c7c83ac6-486b-493d-b9b5-33cca07fa389"
+      }
     }
   }
 }
